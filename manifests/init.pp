@@ -233,6 +233,10 @@
 #
 # See README for usage patterns.
 #
+# == Author
+#   Alessandro Franceschi <al@lab42.it/>
+#   Javier Bertoli <javier@netmanagers.com.ar/>
+#
 class ddclient (
   $my_class            = params_lookup( 'my_class' ),
   $source              = params_lookup( 'source' ),

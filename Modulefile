@@ -1,4 +1,4 @@
-name 'nm-ddclient'
+name 'netmanagers-ddclient'
 version '1.0.0'
 
 author 'Javier Bertoli'

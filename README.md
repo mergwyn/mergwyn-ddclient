@@ -10,6 +10,8 @@ Official git repository: http://github.com/netmanagers/puppet-ddclient
 
 Released under the terms of Apache 2 License.
 
+This module uses R.I.Pienaar's concat module as a dependency.
+
 This module requires functions provided by the Example42 Puppi module (you need it even if you don't use and install Puppi)
 
 For detailed info about the logic and usage patterns of Example42 modules check the DOCS directory on Example42 main modules set.

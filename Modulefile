@@ -1,5 +1,5 @@
 name 'netmanagers-ddclient'
-version '1.0.1'
+version '1.0.2'
 
 author 'Javier Bertoli'
 license 'Apache2'
@@ -9,5 +9,4 @@ summary 'Puppet module for ddclient'
 description 'This module installs and manages ddclient. Check README for details.'
 dependency 'ripienaar/concat', '>=0.2.0'
 dependency 'example42/puppi', '>=2.0.0'
-dependency 'example42/firewall', '>=2.0.0'
 dependency 'example42/monitor', '>=2.0.0'

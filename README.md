@@ -20,11 +20,27 @@ For detailed info about the logic and usage patterns of Example42 modules check 
 
 * All parameters can be set using Hiera. See the manifests to see what can be set.
 
-* Install ddclient with default settings
+* Install ddclient with default distro's settings
 
         class { 'ddclient': }
 
-* You can configure and set a dDNS provider using ddclient::host
+* You can configure and configure a single dDNS provider using a template:
+
+        class { 'ddclient': 
+          host_config   => 'file',
+          template      = 'ddclient/ddclient.conf.erb',
+          server        = 'ddns_provider',
+          login         = 'myuser',
+          password      = 'secret',
+          protocol      = 'ddns_prot',
+          hostname      = 'my.host.name',
+        }
+
+* Or you can configure multiple hosts using host\_config => 'concat' and ddclient::host define:
+
+        class { 'ddclient': 
+          host_config   => 'concat',
+        }
 
         ddclient::host { 'my_ddns.hostname.com':
           server    => 'one.ddns.provider.com',

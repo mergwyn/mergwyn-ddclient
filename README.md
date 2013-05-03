@@ -24,16 +24,16 @@ For detailed info about the logic and usage patterns of Example42 modules check 
 
         class { 'ddclient': }
 
-* You can configure and configure a single dDNS provider using a template:
+* You can install and configure a single dDNS host/provider using a template (ie., the included one):
 
         class { 'ddclient': 
-          host_config   => 'file',
-          template      = 'ddclient/ddclient.conf.erb',
-          server        = 'ddns_provider',
-          login         = 'myuser',
-          password      = 'secret',
-          protocol      = 'ddns_prot',
-          hostname      = 'my.host.name',
+          host_config => 'file',
+          template    => 'ddclient/ddclient.conf.erb',
+          server      => 'ddns_provider',
+          login       => 'myuser',
+          password    => 'secret',
+          protocol    => 'ddns_prot',
+          hostname    => 'my.host.name',
         }
 
 * Or you can configure multiple hosts using host\_config => 'concat' and ddclient::host define:
@@ -128,16 +128,6 @@ For detailed info about the logic and usage patterns of Example42 modules check 
           monitor      => true,
           monitor_tool => [ 'nagios' , 'monit' , 'munin' ],
         }
-
-* Activate automatic firewalling. This option requires the usage of Example42 firewall and relevant firewall tools modules
-
-        class { 'ddclient':       
-          firewall      => true,
-          firewall_tool => 'iptables',
-          firewall_src  => '10.42.0.0/24',
-          firewall_dst  => $ipaddress_eth0,
-        }
-
 
 ## CONTINUOUS TESTING
 

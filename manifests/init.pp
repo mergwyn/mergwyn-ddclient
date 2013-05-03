@@ -18,18 +18,6 @@
 #   If defined, ddclient main config file will have the param: source => $source
 #   Can be defined also by the (top scope) variable $ddclient_source
 #
-# [*source_dir*]
-#   If defined, the whole ddclient configuration directory content is retrieved
-#   recursively from the specified source
-#   (source => $source_dir , recurse => true)
-#   Can be defined also by the (top scope) variable $ddclient_source_dir
-#
-# [*source_dir_purge*]
-#   If set to true (default false) the existing configuration directory is
-#   mirrored with the content retrieved from source_dir
-#   (source => $source_dir , recurse => true , purge => true)
-#   Can be defined also by the (top scope) variable $ddclient_source_dir_purge
-#
 # [*template*]
 #   Sets the path to the template to use as content for main configuration file
 #   If defined, ddclient main config file has: content => content("$template")
@@ -93,27 +81,6 @@
 #   Can be defined also by the (top scope) variables $ddclient_puppi_helper
 #   and $puppi_helper
 #
-# [*firewall*]
-#   Set to 'true' to enable firewalling of the services provided by the module
-#   Can be defined also by the (top scope) variables $ddclient_firewall
-#   and $firewall
-#
-# [*firewall_tool*]
-#   Define which firewall tool(s) (ad defined in Example42 firewall module)
-#   you want to use to open firewall for ddclient port(s)
-#   Can be defined also by the (top scope) variables $ddclient_firewall_tool
-#   and $firewall_tool
-#
-# [*firewall_src*]
-#   Define which source ip/net allow for firewalling ddclient. Default: 0.0.0.0/0
-#   Can be defined also by the (top scope) variables $ddclient_firewall_src
-#   and $firewall_src
-#
-# [*firewall_dst*]
-#   Define which destination ip to use for firewalling. Default: $ipaddress
-#   Can be defined also by the (top scope) variables $ddclient_firewall_dst
-#   and $firewall_dst
-#
 # [*debug*]
 #   Set to 'true' to enable modules debugging
 #   Can be defined also by the (top scope) variables $ddclient_debug and $debug
@@ -165,7 +132,24 @@
 # Define how you want to manage ddclient configuration:
 # "file" - To provide hosts stanzas as a normal file
 # "concat" - To build them up using different fragments
-#          - This option, set as default, permits the use of the ddclient::host define
+#          - This option, recommended, permits the use of the ddclient::host
+#            define
+#
+# [*server*]
+#   If using "file" as config method, and want to use the provided template,
+#   you can set a dDNS server here
+#
+# [*login*]
+#   And the login required here
+#
+# [*password*]
+#   The password here
+#
+# [*protocol*]
+#   The protocol here (dyndns, noip2, etc.)
+#
+# [*hostname*]
+#   The hostname your host has
 #
 # [*config_file_mode*]
 #   Main configuration file path mode
@@ -192,7 +176,8 @@
 #   Log file(s). Used by puppi
 #
 # [*daemon_interval*]
-#   Interval, in seconds, at which the daemon will wake up and check if the dDNS is up-to-date.
+#   Interval, in seconds, at which the daemon will wake up and check if the
+#   dDNS is up-to-date.
 #   Default: 3600 (1 hour)
 #
 # [*enable_syslog*]
@@ -209,21 +194,16 @@
 #
 # [*getip_from*]
 #   Method to obtain your current IP.
-#   There are plenty of options, so take a look at the examples ddclient provides, to find
-#   a method that suits you. "web" and a ddns provider in the options are a common choice.
+#   There are plenty of options, so take a look at the examples ddclient
+#   provides, to find a method that suits you. "web" and a ddns provider in
+#   the options are a common choice.
 #
 # [*getip_options*]
-#   Each method to get the current host IP has several options to configure it, so you can
-#   provide an array of options here, in the format
+#   Each method to get the current host IP has several options to configure it,
+#   so you can an array of options here, in the format
 #   ['option_name1=option_value1',..,'option_nameN=option_valueN']
 #   Sadly, I couldn't find yet a better way to pass all these options.
 #   Suggestions are welcome
-#
-# [*port*]
-#   The listening port, if any, of the service.
-#   This is used by monitor, firewall and puppi (optional) components
-#   Note: This doesn't necessarily affect the service configuration file
-#   Can be defined also by the (top scope) variable $ddclient_port
 #
 # [*protocol*]
 #   The protocol used by the the service.
@@ -240,9 +220,12 @@
 class ddclient (
   $my_class            = params_lookup( 'my_class' ),
   $source              = params_lookup( 'source' ),
-  $source_dir          = params_lookup( 'source_dir' ),
-  $source_dir_purge    = params_lookup( 'source_dir_purge' ),
   $template            = params_lookup( 'template' ),
+  $server              = params_lookup( 'server' ),
+  $login               = params_lookup( 'login' ),
+  $password            = params_lookup( 'password' ),
+  $protocol            = params_lookup( 'protocol' ),
+  $hostname            = params_lookup( 'hostname' ),
   $service_autorestart = params_lookup( 'service_autorestart' , 'global' ),
   $options             = params_lookup( 'options' ),
   $version             = params_lookup( 'version' ),
@@ -254,10 +237,6 @@ class ddclient (
   $monitor_target      = params_lookup( 'monitor_target' , 'global' ),
   $puppi               = params_lookup( 'puppi' , 'global' ),
   $puppi_helper        = params_lookup( 'puppi_helper' , 'global' ),
-  $firewall            = params_lookup( 'firewall' , 'global' ),
-  $firewall_tool       = params_lookup( 'firewall_tool' , 'global' ),
-  $firewall_src        = params_lookup( 'firewall_src' , 'global' ),
-  $firewall_dst        = params_lookup( 'firewall_dst' , 'global' ),
   $debug               = params_lookup( 'debug' , 'global' ),
   $audit_only          = params_lookup( 'audit_only' , 'global' ),
   $noops               = params_lookup( 'noops' ),
@@ -288,14 +267,12 @@ class ddclient (
   $protocol            = params_lookup( 'protocol' )
   ) inherits ddclient::params {
 
-  $bool_source_dir_purge=any2bool($source_dir_purge)
   $bool_service_autorestart=any2bool($service_autorestart)
   $bool_absent=any2bool($absent)
   $bool_disable=any2bool($disable)
   $bool_disableboot=any2bool($disableboot)
   $bool_monitor=any2bool($monitor)
   $bool_puppi=any2bool($puppi)
-  $bool_firewall=any2bool($firewall)
   $bool_debug=any2bool($debug)
   $bool_audit_only=any2bool($audit_only)
   $bool_noops=any2bool($noops)
@@ -344,13 +321,6 @@ class ddclient (
     $manage_monitor = true
   }
 
-  if $ddclient::bool_absent == true
-  or $ddclient::bool_disable == true {
-    $manage_firewall = false
-  } else {
-    $manage_firewall = true
-  }
-
   $manage_audit = $ddclient::bool_audit_only ? {
     true  => 'all',
     false => undef,
@@ -380,10 +350,31 @@ class ddclient (
   }
 
   # How to manage ddclient configuration
-  case $ddclient::hosts_config {
-    'file': { include ddclient::file }
-    'concat': { include ddclient::concat }
-    default: { }
+  if $ddclient::hosts_config  == 'file' {
+    $manage_file_source = $ddclient::source ? {
+      ''        => undef,
+      default   => $ddclient::source,
+    }
+
+    $manage_file_content = $ddclient::template ? {
+      ''        => undef,
+      default   => template($ddclient::template),
+    }
+
+    file { 'ddclient.conf':
+      ensure  => $ddclient::manage_file,
+      path    => $ddclient::config_file,
+      mode    => $ddclient::config_file_mode,
+      owner   => $ddclient::config_file_owner,
+      group   => $ddclient::config_file_group,
+      require => Package[$ddclient::package],
+      notify  => $ddclient::manage_service_autorestart,
+      source  => $ddclient::manage_file_source,
+      content => $ddclient::manage_file_content,
+      replace => $ddclient::manage_file_replace,
+      audit   => $ddclient::manage_audit,
+      noop    => $ddclient::bool_noops,
+    }
   }
 
   ### Managed resources
@@ -402,29 +393,10 @@ class ddclient (
     noop       => $ddclient::bool_noops,
   }
 
-  # The whole ddclient configuration directory can be recursively overriden
-  if $ddclient::source_dir {
-    file { 'ddclient.dir':
-      ensure  => directory,
-      path    => $ddclient::config_dir,
-      require => Package[$ddclient::package],
-      notify  => $ddclient::manage_service_autorestart,
-      source  => $ddclient::source_dir,
-      recurse => true,
-      purge   => $ddclient::bool_source_dir_purge,
-      force   => $ddclient::bool_source_dir_purge,
-      replace => $ddclient::manage_file_replace,
-      audit   => $ddclient::manage_audit,
-      noop    => $ddclient::bool_noops,
-    }
-  }
-
-
   ### Include custom class if $my_class is set
   if $ddclient::my_class {
     include $ddclient::my_class
   }
-
 
   ### Provide puppi data, if enabled ( puppi => true )
   if $ddclient::bool_puppi == true {
@@ -463,23 +435,6 @@ class ddclient (
       }
     }
   }
-
-
-  ### Firewall management, if enabled ( firewall => true )
-  if $ddclient::bool_firewall == true and $ddclient::port != '' {
-    firewall { "ddclient_${ddclient::protocol}_${ddclient::port}":
-      source      => $ddclient::firewall_src,
-      destination => $ddclient::firewall_dst,
-      protocol    => $ddclient::protocol,
-      port        => $ddclient::port,
-      action      => 'allow',
-      direction   => 'input',
-      tool        => $ddclient::firewall_tool,
-      enable      => $ddclient::manage_firewall,
-      noop        => $ddclient::bool_noops,
-    }
-  }
-
 
   ### Debugging, if enabled ( debug => true )
   if $ddclient::bool_debug == true {

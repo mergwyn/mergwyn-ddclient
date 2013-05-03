@@ -41,21 +41,32 @@ class ddclient::params {
   }
 
   $config_dir = $::operatingsystem ? {
-    default => '/etc/ddclient',
+    default => '/etc',
   }
 
   $config_file = $::operatingsystem ? {
-    default => '/etc/ddclient.conf',
+    default => "${config_dir}/ddclient.conf",
   }
 
   # Define how you want to manage ddclient configuration:
   # "file" - To provide hosts stanzas as a normal file
   # "concat" - To build them up using different fragments
-  #          - This option, set as default, permits the use of the ddclient::host define
-  $hosts_config = 'concat'
+  #          - This option, recommended, permits the use of the
+  #            ddclient::host define
+  $hosts_config = ''
 
-  $hosts_template_header = 'ddclient/ddclient.conf-header.erb'
-  $hosts_template_footer = 'ddclient/ddclient.conf-footer.erb'
+  $hosts_template_header = 'ddclient/concat/ddclient.conf-header.erb'
+  $hosts_template_footer = ''
+
+  # If using "file" and want to use the provided template,
+  # you can set a stanza here
+  $source = ''
+  $template = ''
+  $server = ''
+  $login = ''
+  $password = ''
+  $protocol = ''
+  $hostname = ''
 
   $config_file_mode = $::operatingsystem ? {
     default => '0644',
@@ -97,15 +108,8 @@ class ddclient::params {
   $getip_from = ''
   $getip_options = ''
 
-  $port = '42'
-  $protocol = 'tcp'
-
   # General Settings
   $my_class = ''
-  $source = ''
-  $source_dir = ''
-  $source_dir_purge = false
-  $template = ''
   $options = ''
   $service_autorestart = true
   $version = 'present'
@@ -117,14 +121,9 @@ class ddclient::params {
   $monitor = false
   $monitor_tool = ''
   $monitor_target = $::ipaddress
-  $firewall = false
-  $firewall_tool = ''
-  $firewall_src = '0.0.0.0/0'
-  $firewall_dst = $::ipaddress
   $puppi = false
   $puppi_helper = 'standard'
   $debug = false
   $audit_only = false
   $noops = false
-
 }

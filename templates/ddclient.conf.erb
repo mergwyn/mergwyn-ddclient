@@ -1,0 +1,26 @@
+# This file is managed by Puppet. DO NOT EDIT.
+
+<% if scope.lookupvar("ddclient::daemon_interval") != '' -%>
+daemon=<%= scope.lookupvar("ddclient::daemon_interval") %>
+<% end -%>
+<% if scope.lookupvar("ddclient::real_enable_syslog") != '' -%>
+syslog=<%= scope.lookupvar("ddclient::real_enable_syslog") %>
+<% end -%>
+<% if scope.lookupvar("ddclient::mailto") != '' -%>
+mail=<%= scope.lookupvar("ddclient::mailto") %>
+<% end -%>
+<% if scope.lookupvar("ddclient::pid_file") != '' -%>
+pid=<%= scope.lookupvar("ddclient::pid_file") %>
+<% end -%>
+<% if scope.lookupvar("ddclient::real_enable_ssl") != '' -%>
+ssl=<%= scope.lookupvar("ddclient::real_enable_ssl") %>
+<% end -%>
+<% if scope.lookupvar("ddclient::getip_from") != '' -%>
+use=<%= scope.lookupvar("ddclient::getip_from") %><% if scope.lookupvar("ddclient::array_getip_options") != [] -%>,<%= scope.lookupvar("ddclient::array_getip_options") * ',' %><% end -%>
+<% end -%>
+
+server=<%= scope.lookupvar('ddclient::server') %>, \
+login=<%= scope.lookupvar('ddclient::login') %>, \
+password=<%= scope.lookupvar('ddclient::password') %>, \
+protocol=<%= scope.lookupvar('ddclient::protocol') %>, \
+<%= scope.lookupvar('ddclient::hostname') %>

@@ -356,12 +356,12 @@ class ddclient (
         ''        => undef,
         default   => $ddclient::source,
       }
-  
+
       $manage_file_content = $ddclient::template ? {
         ''        => undef,
         default   => template($ddclient::template),
       }
-  
+
       file { 'ddclient.conf':
         ensure  => $ddclient::manage_file,
         path    => $ddclient::config_file,

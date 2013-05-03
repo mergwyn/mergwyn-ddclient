@@ -56,7 +56,7 @@ define ddclient::host (
       order   => 01,
       notify  => Service['ddclient'],
     }
- 
+
     # The host.local footer
     if $ddclient::hosts_template_footer != '' {
       concat::fragment{ 'ddclient_hosts_footer':

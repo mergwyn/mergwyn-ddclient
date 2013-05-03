@@ -2,7 +2,7 @@
 
 This is a Puppet module for ddclient based on the second generation layout ("NextGen") of Example42 Puppet Modules.
 
-Made by Javier Bértoli / Netmanagers
+Made by Javier Bertoli / Netmanagers
 
 Official site: http://www.netmanagers.com.ar
 

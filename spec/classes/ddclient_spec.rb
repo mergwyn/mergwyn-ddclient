@@ -12,6 +12,11 @@ describe 'ddclient' do
     it { should contain_service('ddclient').with_enable('true') }
   end
 
+  describe 'Test ddclient.conf config undefined' do
+    let(:params) { {:hosts_config => '' } }
+    it { should_not contain_file('ddclient.conf') }
+  end
+
   describe 'Test ddclient.conf managed through file - source' do
     let(:params) { {:hosts_config => 'file', :source => 'puppet:///modules/ddclient/spec' } }
     it { should contain_file('ddclient.conf').with_source('puppet:///modules/ddclient/spec') }
@@ -33,6 +38,23 @@ describe 'ddclient' do
     it { should contain_file('ddclient.conf').with_content(/password=secret,/) }
     it { should contain_file('ddclient.conf').with_content(/protocol=proto,/) }
     it { should contain_file('ddclient.conf').with_content(/rspec.example42.com/) }
+  end
+
+  describe 'Test ddclient.conf managed through concat - template' do
+    let(:facts) { {:operatingsystem => 'Debian', :concat_basedir => '/var/lib/puppet/concat'} }
+    let(:params) { {:hosts_config => 'concat',
+                    :hostname => 'myhost',
+                    :server => 'some.ddns.server',
+                    :login => 'me',
+                    :password => 'secret',
+                    :protocol => 'proto' } }
+    it { should_not contain_file('ddclient.conf') }
+    it { should contain_ddclient__host('myhost') }
+    it { should contain_ddclient__host('myhost').with_name('myhost') }
+    it { should contain_ddclient__host('myhost').with_server('some.ddns.server') }
+    it { should contain_ddclient__host('myhost').with_login('me') }
+    it { should contain_ddclient__host('myhost').with_password('secret') }
+    it { should contain_ddclient__host('myhost').with_protocol('proto') }
   end
 
   describe 'Test ddclient.conf managed throuh file - custom template' do
@@ -150,4 +172,3 @@ describe 'ddclient' do
   end
 
 end
-

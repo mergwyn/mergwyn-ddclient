@@ -350,31 +350,42 @@ class ddclient (
   }
 
   # How to manage ddclient configuration
-  if $ddclient::hosts_config  == 'file' {
-    $manage_file_source = $ddclient::source ? {
-      ''        => undef,
-      default   => $ddclient::source,
+  case $ddclient::hosts_config {
+    'file': {
+      $manage_file_source = $ddclient::source ? {
+        ''        => undef,
+        default   => $ddclient::source,
+      }
+  
+      $manage_file_content = $ddclient::template ? {
+        ''        => undef,
+        default   => template($ddclient::template),
+      }
+  
+      file { 'ddclient.conf':
+        ensure  => $ddclient::manage_file,
+        path    => $ddclient::config_file,
+        mode    => $ddclient::config_file_mode,
+        owner   => $ddclient::config_file_owner,
+        group   => $ddclient::config_file_group,
+        require => Package[$ddclient::package],
+        notify  => $ddclient::manage_service_autorestart,
+        source  => $ddclient::manage_file_source,
+        content => $ddclient::manage_file_content,
+        replace => $ddclient::manage_file_replace,
+        audit   => $ddclient::manage_audit,
+        noop    => $ddclient::bool_noops,
+      }
     }
-
-    $manage_file_content = $ddclient::template ? {
-      ''        => undef,
-      default   => template($ddclient::template),
+    'concat': {
+      ddclient::host { $ddclient::hostname:
+        server   => $ddclient::server,
+        login    => $ddclient::login,
+        password => $ddclient::password,
+        protocol => $ddclient::protocol,
+      }
     }
-
-    file { 'ddclient.conf':
-      ensure  => $ddclient::manage_file,
-      path    => $ddclient::config_file,
-      mode    => $ddclient::config_file_mode,
-      owner   => $ddclient::config_file_owner,
-      group   => $ddclient::config_file_group,
-      require => Package[$ddclient::package],
-      notify  => $ddclient::manage_service_autorestart,
-      source  => $ddclient::manage_file_source,
-      content => $ddclient::manage_file_content,
-      replace => $ddclient::manage_file_replace,
-      audit   => $ddclient::manage_audit,
-      noop    => $ddclient::bool_noops,
-    }
+    default: { }
   }
 
   ### Managed resources

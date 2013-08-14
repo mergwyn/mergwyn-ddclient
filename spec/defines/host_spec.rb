@@ -16,7 +16,7 @@ describe 'ddclient::host' do
     it { should include_class('concat::setup') }
     it { should contain_concat__fragment('ddclient_host_sample1').with_target('/etc/ddclient.conf').with_content(/server=someserver1/) }
     it { should contain_concat__fragment('ddclient_host_sample1').with_target('/etc/ddclient.conf').with_content(/login=me/) }
-    it { should contain_concat__fragment('ddclient_host_sample1').with_target('/etc/ddclient.conf').with_content(/password=secret/) }
+    it { should contain_concat__fragment('ddclient_host_sample1').with_target('/etc/ddclient.conf').with_content(/password='secret'/) }
     it { should contain_concat__fragment('ddclient_host_sample1').with_target('/etc/ddclient.conf').with_content(/protocol=myprot/) }
   end
 end

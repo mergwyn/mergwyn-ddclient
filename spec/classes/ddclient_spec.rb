@@ -35,7 +35,7 @@ describe 'ddclient' do
     it { should contain_file('ddclient.conf').without_source }
     it { should contain_file('ddclient.conf').with_content(/server=some.ddns.server/) }
     it { should contain_file('ddclient.conf').with_content(/login=me,/) }
-    it { should contain_file('ddclient.conf').with_content(/password=secret,/) }
+    it { should contain_file('ddclient.conf').with_content(/password='secret',/) }
     it { should contain_file('ddclient.conf').with_content(/protocol=proto,/) }
     it { should contain_file('ddclient.conf').with_content(/rspec.example42.com/) }
   end

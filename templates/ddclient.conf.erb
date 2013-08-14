@@ -21,6 +21,6 @@ use=<%= scope.lookupvar("ddclient::getip_from") %><% if scope.lookupvar("ddclien
 
 server=<%= scope.lookupvar('ddclient::server') %>, \
 login=<%= scope.lookupvar('ddclient::login') %>, \
-password=<%= scope.lookupvar('ddclient::password') %>, \
+password='<%= scope.lookupvar('ddclient::password') %>', \
 protocol=<%= scope.lookupvar('ddclient::protocol') %>, \
 <%= scope.lookupvar('ddclient::hostname') %>

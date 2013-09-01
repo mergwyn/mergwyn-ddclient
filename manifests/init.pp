@@ -95,7 +95,7 @@
 # [*noops*]
 #   Set noop metaparameter to true for all the resources managed by the module.
 #   Basically you can run a dryrun for this specific module if you set
-#   this to true. Default: false
+#   this to true. Default: undef
 #
 # Default class params - As defined in ddclient::params.
 # Note that these variables are mostly defined and used in the module itself,
@@ -275,7 +275,6 @@ class ddclient (
   $bool_puppi=any2bool($puppi)
   $bool_debug=any2bool($debug)
   $bool_audit_only=any2bool($audit_only)
-  $bool_noops=any2bool($noops)
   $bool_enable_syslog=any2bool($enable_syslog)
 
   ### Definition of some variables used in the module
@@ -374,7 +373,7 @@ class ddclient (
         content => $ddclient::manage_file_content,
         replace => $ddclient::manage_file_replace,
         audit   => $ddclient::manage_audit,
-        noop    => $ddclient::bool_noops,
+        noop    => $ddclient::noops,
       }
     }
     'concat': {
@@ -391,7 +390,7 @@ class ddclient (
   ### Managed resources
   package { $ddclient::package:
     ensure  => $ddclient::manage_package,
-    noop    => $ddclient::bool_noops,
+    noop    => $ddclient::noops,
   }
 
   service { 'ddclient':
@@ -401,7 +400,7 @@ class ddclient (
     hasstatus  => $ddclient::service_status,
     pattern    => $ddclient::process,
     require    => Package[$ddclient::package],
-    noop       => $ddclient::bool_noops,
+    noop       => $ddclient::noops,
   }
 
   ### Include custom class if $my_class is set
@@ -416,7 +415,7 @@ class ddclient (
       ensure    => $ddclient::manage_file,
       variables => $classvars,
       helper    => $ddclient::puppi_helper,
-      noop      => $ddclient::bool_noops,
+      noop      => $ddclient::noops,
     }
   }
 
@@ -430,7 +429,7 @@ class ddclient (
         target   => $ddclient::monitor_target,
         tool     => $ddclient::monitor_tool,
         enable   => $ddclient::manage_monitor,
-        noop     => $ddclient::bool_noops,
+        noop     => $ddclient::noops,
       }
     }
     if $ddclient::service != '' {
@@ -442,7 +441,7 @@ class ddclient (
         argument => $ddclient::process_args,
         tool     => $ddclient::monitor_tool,
         enable   => $ddclient::manage_monitor,
-        noop     => $ddclient::bool_noops,
+        noop     => $ddclient::noops,
       }
     }
   }
@@ -456,7 +455,7 @@ class ddclient (
       owner   => 'root',
       group   => 'root',
       content => inline_template('<%= scope.to_hash.reject { |k,v| k.to_s =~ /(uptime.*|path|timestamp|free|.*password.*|.*psk.*|.*key)/ }.to_yaml %>'),
-      noop    => $ddclient::bool_noops,
+      noop    => $ddclient::noops,
     }
   }
 

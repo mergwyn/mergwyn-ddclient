@@ -20,10 +20,10 @@ define ddclient::host (
   $password  = '',
   $protocol  = '',
   $order     = '',
-  $enable    = true ) {
+  $enable    = true
+) {
 
   include ddclient
-  include concat::setup
 
   $real_hostname = $hostname ? {
     ''      => $title,

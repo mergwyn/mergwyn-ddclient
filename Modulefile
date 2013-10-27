@@ -1,5 +1,5 @@
 name 'netmanagers-ddclient'
-version '1.0.4'
+version '1.0.5'
 
 author 'Javier Bertoli'
 license 'Apache2'

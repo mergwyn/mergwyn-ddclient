@@ -69,18 +69,6 @@
 #   Can be defined also by the (top scope) variables $ddclient_monitor_target
 #   and $monitor_target
 #
-# [*puppi*]
-#   Set to 'true' to enable creation of module data files that are used by puppi
-#   Can be defined also by the (top scope) variables $ddclient_puppi and $puppi
-#
-# [*puppi_helper*]
-#   Specify the helper to use for puppi commands. The default for this module
-#   is specified in params.pp and is generally a good choice.
-#   You can customize the output of puppi commands for this module using another
-#   puppi helper. Use the define puppi::helper to create a new custom helper
-#   Can be defined also by the (top scope) variables $ddclient_puppi_helper
-#   and $puppi_helper
-#
 # [*debug*]
 #   Set to 'true' to enable modules debugging
 #   Can be defined also by the (top scope) variables $ddclient_debug and $debug
@@ -218,64 +206,73 @@
 #   Javier Bertoli <javier@netmanagers.com.ar/>
 #
 class ddclient (
-  $my_class            = params_lookup( 'my_class' ),
-  $source              = params_lookup( 'source' ),
-  $template            = params_lookup( 'template' ),
-  $server              = params_lookup( 'server' ),
-  $login               = params_lookup( 'login' ),
-  $password            = params_lookup( 'password' ),
-  $protocol            = params_lookup( 'protocol' ),
-  $hostname            = params_lookup( 'hostname' ),
-  $service_autorestart = params_lookup( 'service_autorestart' , 'global' ),
-  $options             = params_lookup( 'options' ),
-  $version             = params_lookup( 'version' ),
-  $absent              = params_lookup( 'absent' ),
-  $disable             = params_lookup( 'disable' ),
-  $disableboot         = params_lookup( 'disableboot' ),
-  $monitor             = params_lookup( 'monitor' , 'global' ),
-  $monitor_tool        = params_lookup( 'monitor_tool' , 'global' ),
-  $monitor_target      = params_lookup( 'monitor_target' , 'global' ),
-  $puppi               = params_lookup( 'puppi' , 'global' ),
-  $puppi_helper        = params_lookup( 'puppi_helper' , 'global' ),
-  $debug               = params_lookup( 'debug' , 'global' ),
-  $audit_only          = params_lookup( 'audit_only' , 'global' ),
-  $noops               = params_lookup( 'noops' ),
-  $package             = params_lookup( 'package' ),
-  $service             = params_lookup( 'service' ),
-  $service_status      = params_lookup( 'service_status' ),
-  $process             = params_lookup( 'process' ),
-  $process_args        = params_lookup( 'process_args' ),
-  $process_user        = params_lookup( 'process_user' ),
-  $config_dir          = params_lookup( 'config_dir' ),
-  $config_file         = params_lookup( 'config_file' ),
-  $config_file_mode    = params_lookup( 'config_file_mode' ),
-  $config_file_owner   = params_lookup( 'config_file_owner' ),
-  $config_file_group   = params_lookup( 'config_file_group' ),
-  $config_file_init    = params_lookup( 'config_file_init' ),
-  $pid_file            = params_lookup( 'pid_file' ),
-  $data_dir            = params_lookup( 'data_dir' ),
-  $log_dir             = params_lookup( 'log_dir' ),
-  $log_file            = params_lookup( 'log_file' ),
-  $hosts_config        = params_lookup( 'hosts_config' ),
-  $daemon_interval     = params_lookup( 'daemon_interval' ),
-  $enable_syslog       = params_lookup( 'enable_syslog' ),
-  $mailto              = params_lookup( 'mailto' ),
-  $enable_ssl          = params_lookup( 'enable_ssl' ),
-  $getip_from          = params_lookup( 'getip_from' ),
-  $getip_options       = params_lookup( 'getip_options' ),
-  $port                = params_lookup( 'port' ),
-  $protocol            = params_lookup( 'protocol' )
+  $my_class            = $ddclient::params::my_class,
+  $source              = $ddclient::params::source,
+  $template            = $ddclient::params::template,
+  $server              = $ddclient::params::server,
+  $login               = $ddclient::params::login,
+  $password            = $ddclient::params::password,
+  $protocol            = $ddclient::params::protocol,
+  $hostname            = $ddclient::params::hostname,
+  $service_autorestart = $ddclient::params::service_autorestart,
+  $options             = $ddclient::params::options,
+  $version             = $ddclient::params::version,
+  $absent              = $ddclient::params::absent,
+  $disable             = $ddclient::params::disable,
+  $disableboot         = $ddclient::params::disableboot,
+  $monitor             = $ddclient::params::monitor,
+  $monitor_tool        = $ddclient::params::monitor_tool,
+  $monitor_target      = $ddclient::params::monitor_target,
+  $debug               = $ddclient::params::debug,
+  $audit_only          = $ddclient::params::audit_only,
+  $noops               = $ddclient::params::noops,
+  $package             = $ddclient::params::package,
+  $service             = $ddclient::params::service,
+  $service_status      = $ddclient::params::service_status,
+  $process             = $ddclient::params::process,
+  $process_args        = $ddclient::params::process_args,
+  $process_user        = $ddclient::params::process_user,
+  $config_dir          = $ddclient::params::config_dir,
+  $config_file         = $ddclient::params::config_file,
+  $config_file_mode    = $ddclient::params::config_file_mode,
+  $config_file_owner   = $ddclient::params::config_file_owner,
+  $config_file_group   = $ddclient::params::config_file_group,
+  $config_file_init    = $ddclient::params::config_file_init,
+  $pid_file            = $ddclient::params::pid_file,
+  $data_dir            = $ddclient::params::data_dir,
+  $log_dir             = $ddclient::params::log_dir,
+  $log_file            = $ddclient::params::log_file,
+  $hosts_config        = $ddclient::params::hosts_config,
+  $daemon_interval     = $ddclient::params::daemon_interval,
+  $enable_syslog       = $ddclient::params::enable_syslog,
+  $mailto              = $ddclient::params::mailto,
+  $enable_ssl          = $ddclient::params::enable_ssl,
+  $getip_from          = $ddclient::params::getip_from,
+  $getip_options       = $ddclient::params::getip_options,
+  $port                = $ddclient::params::port,
+  $protocol            = $ddclient::params::protocol
   ) inherits ddclient::params {
 
-  $bool_service_autorestart=any2bool($service_autorestart)
-  $bool_absent=any2bool($absent)
-  $bool_disable=any2bool($disable)
-  $bool_disableboot=any2bool($disableboot)
-  $bool_monitor=any2bool($monitor)
-  $bool_puppi=any2bool($puppi)
-  $bool_debug=any2bool($debug)
-  $bool_audit_only=any2bool($audit_only)
-  $bool_enable_syslog=any2bool($enable_syslog)
+  # This used to use the any2bool function from puppi, and I don't feel like
+  # fixing all of it
+  validate_bool($service_autorestart)
+  validate_bool($absent)
+  validate_bool($disable)
+  validate_bool($disableboot)
+  validate_bool($monitor)
+  validate_bool($puppi)
+  validate_bool($debug)
+  validate_bool($audit_only)
+  validate_bool($enable_syslog)
+  $bool_service_autorestart=$service_autorestart
+  $bool_absent=$absent
+  $bool_disable=$disable
+  $bool_disableboot=$disableboot
+  $bool_monitor=$monitor
+  $bool_puppi=$puppi
+  $bool_debug=$debug
+  $bool_audit_only=$audit_only
+  $bool_enable_syslog=$enable_syslog
 
   ### Definition of some variables used in the module
   $manage_package = $ddclient::bool_absent ? {

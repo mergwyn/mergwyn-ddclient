@@ -250,7 +250,6 @@ class ddclient (
   $getip_from          = $ddclient::params::getip_from,
   $getip_options       = $ddclient::params::getip_options,
   $port                = $ddclient::params::port,
-  $protocol            = $ddclient::params::protocol
   ) inherits ddclient::params {
 
   # This used to use the any2bool function from puppi, and I don't feel like

@@ -69,7 +69,7 @@ class ddclient::params {
   $hostname = ''
 
   $config_file_mode = $::operatingsystem ? {
-    default => '0644',
+    default => '0600',
   }
 
   $config_file_owner = $::operatingsystem ? {
@@ -109,8 +109,8 @@ class ddclient::params {
   $getip_options = ''
 
   # General Settings
-  $my_class = ''
-  $options = ''
+  $my_class = undef
+  $options = undef
   $service_autorestart = true
   $version = 'present'
   $absent = false

@@ -373,11 +373,13 @@ class ddclient (
       }
     }
     'concat': {
-      ddclient::host { $ddclient::hostname:
-        server   => $ddclient::server,
-        login    => $ddclient::login,
-        password => $ddclient::password,
-        protocol => $ddclient::protocol,
+      if $ddclient::hostname != '' {
+        ddclient::host { $ddclient::hostname:
+          server   => $ddclient::server,
+          login    => $ddclient::login,
+          password => $ddclient::password,
+          protocol => $ddclient::protocol,
+        }
       }
     }
     default: { }

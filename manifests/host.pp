@@ -69,7 +69,6 @@ define ddclient::host (
   }
 
   concat::fragment{ "ddclient_host_${name}":
-    ensure  => $ensure,
     target  => $ddclient::config_file,
     content => template('ddclient/concat/ddclient.conf-stanza.erb'),
     order   => $real_order,

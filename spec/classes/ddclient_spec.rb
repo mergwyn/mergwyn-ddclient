@@ -29,7 +29,8 @@ describe 'ddclient' do
       end
 
       describe 'Test ddclient.conf managed through file - template' do
-        let(:params) do {
+        let(:params) do
+          {
             hosts_config: 'file', template: 'ddclient/ddclient.conf.erb',
             mailto: 'my@shiny.email',
             server: 'some.ddns.server',
@@ -52,13 +53,14 @@ describe 'ddclient' do
         let(:facts) do
           os_facts.merge(concat_basedir: '/var/lib/puppet/concat')
         end
-        let(:params) do {
+        let(:params) do
+          {
             hosts_config: 'concat',
             hostname: 'myhost',
             server: 'some.ddns.server',
             login: 'me',
             password: 'secret',
-            protocol: 'proto'
+            protocol: 'proto',
           }
         end
 
@@ -131,10 +133,11 @@ describe 'ddclient' do
       end
 
       describe 'Test customizations - template' do
-        let(:params) do {
+        let(:params) do
+          {
             hosts_config: 'file',
             template: 'ddclient/spec.erb',
-            options: { 'opt_a' => 'value_a' }
+            options: { 'opt_a' => 'value_a' },
           }
         end
 

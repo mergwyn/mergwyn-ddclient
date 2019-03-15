@@ -21,8 +21,6 @@ class ddclient::params {
       $service = 'ddclient'
       $service_status = true
       $process = 'ddclient'
-      $process_args = ''
-      $process_user = 'ddclient'
       $config_dir = '/etc'
       $config_file = "${config_dir}/ddclient.conf"
       $config_file_mode = '0644'
@@ -31,7 +29,6 @@ class ddclient::params {
       $config_file_init = '/etc/default/ddclient'
       $pid_file = '/var/run/ddclient.pid'
       $data_dir = '/etc/ddclient'
-      $log_dir = '/var/log/ddclient'
       $log_file = '/var/log/ddclient/ddclient.log'
     }
     default: { fail("Class['ddclient::params']: Unsupported operatingsystem: ${::operatingsystem}") }
@@ -74,12 +71,6 @@ class ddclient::params {
   $disableboot = false
 
   ### General module variables that can have a site or per module default
-  $monitor = false
-  $monitor_tool = ''
-  $monitor_target = $::ipaddress
-  $puppi = false
-  $puppi_helper = 'standard'
-  $debug = false
   $audit_only = false
   $noops = undef
   $port = ''

@@ -47,38 +47,10 @@
 #   Set to 'true' to disable service(s) managed by module
 #   Can be defined also by the (top scope) variable $ddclient_disable
 #
-# [*disableboot*]
-#   Set to 'true' to disable service(s) at boot, without checks if it's running
-#   Use this when the service is managed by a tool like a cluster software
-#   Can be defined also by the (top scope) variable $ddclient_disableboot
-#
-# [*monitor*]
-#   Set to 'true' to enable monitoring of the services provided by the module
-#   Can be defined also by the (top scope) variables $ddclient_monitor
-#   and $monitor
-#
-# [*monitor_tool*]
-#   Define which monitor tools (ad defined in Example42 monitor module)
-#   you want to use for ddclient checks
-#   Can be defined also by the (top scope) variables $ddclient_monitor_tool
-#   and $monitor_tool
-#
-# [*monitor_target*]
-#   The Ip address or hostname to use as a target for monitoring tools.
-#   Default is the fact $ipaddress
-#   Can be defined also by the (top scope) variables $ddclient_monitor_target
-#   and $monitor_target
-#
-# [*debug*]
-#   Set to 'true' to enable modules debugging
-#   Can be defined also by the (top scope) variables $ddclient_debug and $debug
-#
 # [*audit_only*]
 #   Set to 'true' if you don't intend to override existing configuration files
 #   and want to audit the difference between existing files and the ones
 #   managed by Puppet.
-#   Can be defined also by the (top scope) variables $ddclient_audit_only
-#   and $audit_only
 #
 # [*noops*]
 #   Set noop metaparameter to true for all the resources managed by the module.
@@ -102,16 +74,6 @@
 #
 # [*process*]
 #   The name of ddclient process
-#
-# [*process_args*]
-#   The name of ddclient arguments. Used by puppi and monitor.
-#   Used only in case the ddclient process name is generic (java, ruby...)
-#
-# [*process_user*]
-#   The name of the user ddclient runs with. Used by puppi and monitor.
-#
-# [*config_dir*]
-#   Main configuration directory. Used by puppi
 #
 # [*config_file*]
 #   Main configuration file path
@@ -151,18 +113,6 @@
 # [*config_file_init*]
 #   Path of configuration file sourced by init script
 #
-# [*pid_file*]
-#   Path of pid file. Used by monitor
-#
-# [*data_dir*]
-#   Path of application data directory. Used by puppi
-#
-# [*log_dir*]
-#   Base logs directory. Used by puppi
-#
-# [*log_file*]
-#   Log file(s). Used by puppi
-#
 # [*daemon_interval*]
 #   Interval, in seconds, at which the daemon will wake up and check if the
 #   dDNS is up-to-date.
@@ -195,9 +145,6 @@
 #
 # [*protocol*]
 #   The protocol used by the the service.
-#   This is used by monitor, firewall and puppi (optional) components
-#   Can be defined also by the (top scope) variable $ddclient_protocol
-#
 #
 # See README for usage patterns.
 #
@@ -220,18 +167,12 @@ class ddclient (
   $absent              = $ddclient::params::absent,
   $disable             = $ddclient::params::disable,
   $disableboot         = $ddclient::params::disableboot,
-  $monitor             = $ddclient::params::monitor,
-  $monitor_tool        = $ddclient::params::monitor_tool,
-  $monitor_target      = $ddclient::params::monitor_target,
-  $debug               = $ddclient::params::debug,
   $audit_only          = $ddclient::params::audit_only,
   $noops               = $ddclient::params::noops,
   $package             = $ddclient::params::package,
   $service             = $ddclient::params::service,
   $service_status      = $ddclient::params::service_status,
   $process             = $ddclient::params::process,
-  $process_args        = $ddclient::params::process_args,
-  $process_user        = $ddclient::params::process_user,
   $config_dir          = $ddclient::params::config_dir,
   $config_file         = $ddclient::params::config_file,
   $config_file_mode    = $ddclient::params::config_file_mode,
@@ -239,8 +180,6 @@ class ddclient (
   $config_file_group   = $ddclient::params::config_file_group,
   $config_file_init    = $ddclient::params::config_file_init,
   $pid_file            = $ddclient::params::pid_file,
-  $data_dir            = $ddclient::params::data_dir,
-  $log_dir             = $ddclient::params::log_dir,
   $log_file            = $ddclient::params::log_file,
   $hosts_config        = $ddclient::params::hosts_config,
   $daemon_interval     = $ddclient::params::daemon_interval,
@@ -250,8 +189,6 @@ class ddclient (
   $getip_from          = $ddclient::params::getip_from,
   $getip_options       = $ddclient::params::getip_options,
   $port                = $ddclient::params::port,
-  $puppi               = $ddclient::params::puppi,
-  $puppi_helper        = $ddclient::params::puppi_helper,
   ) inherits ddclient::params {
 
   # This used to use the any2bool function from puppi, and I don't feel like
@@ -260,18 +197,12 @@ class ddclient (
   validate_bool($absent)
   validate_bool($disable)
   validate_bool($disableboot)
-  validate_bool($monitor)
-  validate_bool($puppi)
-  validate_bool($debug)
   validate_bool($audit_only)
   validate_bool($enable_syslog)
   $bool_service_autorestart=$service_autorestart
   $bool_absent=$absent
   $bool_disable=$disable
   $bool_disableboot=$disableboot
-  $bool_monitor=$monitor
-  $bool_puppi=$puppi
-  $bool_debug=$debug
   $bool_audit_only=$audit_only
   $bool_enable_syslog=$enable_syslog
   $bool_enable_ssl=$enable_ssl
@@ -309,14 +240,6 @@ class ddclient (
   $manage_file = $ddclient::bool_absent ? {
     true    => 'absent',
     default => 'present',
-  }
-
-  if $ddclient::bool_absent == true
-  or $ddclient::bool_disable == true
-  or $ddclient::bool_disableboot == true {
-    $manage_monitor = false
-  } else {
-    $manage_monitor = true
   }
 
   $manage_audit = $ddclient::bool_audit_only ? {
@@ -407,57 +330,6 @@ class ddclient (
   ### Include custom class if $my_class is set
   if $ddclient::my_class {
     include $ddclient::my_class
-  }
-
-  ### Provide puppi data, if enabled ( puppi => true )
-  if $ddclient::bool_puppi == true {
-    $classvars=get_class_args()
-    puppi::ze { 'ddclient':
-      ensure    => $ddclient::manage_file,
-      variables => $classvars,
-      helper    => $ddclient::puppi_helper,
-      noop      => $ddclient::noops,
-    }
-  }
-
-
-  ### Service monitoring, if enabled ( monitor => true )
-  if $ddclient::bool_monitor == true {
-    if $ddclient::port != '' {
-      monitor::port { "ddclient_${ddclient::protocol}_${ddclient::port}":
-        protocol => $ddclient::protocol,
-        port     => $ddclient::port,
-        target   => $ddclient::monitor_target,
-        tool     => $ddclient::monitor_tool,
-        enable   => $ddclient::manage_monitor,
-        noop     => $ddclient::noops,
-      }
-    }
-    if $ddclient::service != '' {
-      monitor::process { 'ddclient_process':
-        process  => $ddclient::process,
-        service  => $ddclient::service,
-        pidfile  => $ddclient::pid_file,
-        user     => $ddclient::process_user,
-        argument => $ddclient::process_args,
-        tool     => $ddclient::monitor_tool,
-        enable   => $ddclient::manage_monitor,
-        noop     => $ddclient::noops,
-      }
-    }
-  }
-
-  ### Debugging, if enabled ( debug => true )
-  if $ddclient::bool_debug == true {
-    file { 'debug_ddclient':
-      ensure  => $ddclient::manage_file,
-      path    => "${settings::vardir}/debug-ddclient",
-      mode    => '0640',
-      owner   => 'root',
-      group   => 'root',
-      content => inline_template('<%= scope.to_hash.reject { |k,v| k.to_s =~ /(uptime.*|path|timestamp|free|.*password.*|.*psk.*|.*key)/ }.to_yaml %>'),
-      noop    => $ddclient::noops,
-    }
   }
 
 }

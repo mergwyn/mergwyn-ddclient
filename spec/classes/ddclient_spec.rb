@@ -87,49 +87,33 @@ describe 'ddclient' do
         it { is_expected.to contain_package('ddclient').with_ensure('1.0.42') }
       end
 
-      describe 'Test standard installation with monitoring' do
-        let(:params) { { monitor: true } }
-
+      describe 'Test standard installation' do
         it { is_expected.to contain_package('ddclient').with_ensure('present') }
         it { is_expected.to contain_service('ddclient').with_ensure('running') }
         it { is_expected.to contain_service('ddclient').with_enable('true') }
-        it { is_expected.to contain_monitor__process('ddclient_process').with_enable('true') }
       end
 
       describe 'Test decommissioning - absent' do
-        let(:params) { { absent: true, monitor: true } }
+        let(:params) { { absent: true } }
 
         it 'removes Package[ddclient]' do is_expected.to contain_package('ddclient').with_ensure('absent') end
         it 'stops Service[ddclient]' do is_expected.to contain_service('ddclient').with_ensure('stopped') end
         it 'does not enable at boot Service[ddclient]' do is_expected.to contain_service('ddclient').with_enable('false') end
-        it { is_expected.to contain_monitor__process('ddclient_process').with_enable('false') }
       end
 
       describe 'Test decommissioning - disable' do
-        let(:params) { { disable: true, monitor: true } }
+        let(:params) { { disable: true } }
 
         it { is_expected.to contain_package('ddclient').with_ensure('present') }
         it 'stops Service[ddclient]' do is_expected.to contain_service('ddclient').with_ensure('stopped') end
         it 'does not enable at boot Service[ddclient]' do is_expected.to contain_service('ddclient').with_enable('false') end
-        it { is_expected.to contain_monitor__process('ddclient_process').with_enable('false') }
-      end
-
-      describe 'Test decommissioning - disableboot' do
-        let(:params) { { disableboot: true, monitor: true } }
-
-        it { is_expected.to contain_package('ddclient').with_ensure('present') }
-        it { is_expected.not_to contain_service('ddclient').with_ensure('present') }
-        it { is_expected.not_to contain_service('ddclient').with_ensure('absent') }
-        it 'does not enable at boot Service[ddclient]' do is_expected.to contain_service('ddclient').with_enable('false') end
-        it { is_expected.to contain_monitor__process('ddclient_process').with_enable('false') }
       end
 
       describe 'Test noops mode' do
-        let(:params) { { noops: true, monitor: true } }
+        let(:params) { { noops: true } }
 
         it { is_expected.to contain_package('ddclient').with_noop('true') }
         it { is_expected.to contain_service('ddclient').with_noop('true') }
-        it { is_expected.to contain_monitor__process('ddclient_process').with_noop('true') }
       end
 
       describe 'Test customizations - template' do
@@ -162,54 +146,6 @@ describe 'ddclient' do
           content = catalogue.resource('file', 'ddclient.conf').send(:parameters)[:notify]
           content.should be_nil
         end
-      end
-
-      describe 'Test Puppi Integration' do
-        let(:params) { { puppi: true, puppi_helper: 'myhelper' } }
-
-        it { is_expected.to contain_puppi__ze('ddclient').with_helper('myhelper') }
-      end
-
-      describe 'Test Monitoring Tools Integration' do
-        let(:params) { { monitor: true, monitor_tool: 'puppi' } }
-
-        it { is_expected.to contain_monitor__process('ddclient_process').with_tool('puppi') }
-      end
-
-      describe 'Test OldGen Module Set Integration' do
-        let(:params) { { puppi: true, monitor: true, monitor_tool: 'puppi' } }
-
-        it { is_expected.to contain_monitor__process('ddclient_process').with_tool('puppi') }
-        it { is_expected.to contain_puppi__ze('ddclient').with_ensure('present') }
-      end
-
-      describe 'Test params lookup' do
-        let(:facts) { os_facts.merge(ipaddress: '10.42.42.42') }
-        let(:node_params) { { monitor: true } }
-
-        it 'honours top scope global vars' do is_expected.to contain_monitor__process('ddclient_process').with_enable('true') end
-      end
-
-      describe 'Test params lookup' do
-        let(:facts) { os_facts.merge(ipaddress: '10.42.42.42') }
-        let(:node_params) { { monitor: true } }
-
-        it 'honours module specific vars' do is_expected.to contain_monitor__process('ddclient_process').with_enable('true') end
-      end
-
-      describe 'Test params lookup' do
-        let(:facts) { os_facts.merge(ipaddress: '10.42.42.42') }
-        let(:node_params) { { monitor: false, ddclient_monitor: true } }
-
-        it 'honours top scope module specific over global vars' do is_expected.to contain_monitor__process('ddclient_process').with_enable('true') end
-      end
-
-      describe 'Test params lookup' do
-        let(:facts) { os_facts.merge(ipaddress: '10.42.42.42') }
-        let(:node_params) { { monitor: false } }
-        let(:params) { { monitor: true } }
-
-        it 'honours passed params over global vars' do is_expected.to contain_monitor__process('ddclient_process').with_enable('true') end
       end
     end
   end

@@ -108,27 +108,6 @@ For detailed info about the logic and usage patterns of Example42 modules check 
         }
 
 
-## USAGE - Example42 extensions management 
-* Activate puppi (recommended, but disabled by default)
-
-        class { 'ddclient':
-          puppi    => true,
-        }
-
-* Activate puppi and use a custom puppi_helper template (to be provided separately with a puppi::helper define ) to customize the output of puppi commands 
-
-        class { 'ddclient':
-          puppi        => true,
-          puppi_helper => 'myhelper', 
-        }
-
-* Activate automatic monitoring (recommended, but disabled by default). This option requires the usage of Example42 monitor and relevant monitor tools modules
-
-        class { 'ddclient':
-          monitor      => true,
-          monitor_tool => [ 'nagios' , 'monit' , 'munin' ],
-        }
-
 ## CONTINUOUS TESTING
 
 Travis {<img src="https://travis-ci.org/netmanagers/puppet-ddclient.png?branch=master" alt="Build Status" />}[https://travis-ci.org/netmanagers/puppet-ddclient]

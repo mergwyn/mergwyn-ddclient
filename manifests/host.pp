@@ -14,13 +14,14 @@
 #             host.local file
 
 define ddclient::host (
-  $hostname  = '',
-  $server    = '',
-  $login     = '',
-  $password  = '',
-  $protocol  = '',
-  $order     = '',
-  $enable    = true
+  String $hostname  = '',
+  String $server    = '',
+  String $login     = '',
+  String $password  = '',
+  String $protocol  = '',
+  String $order     = '',
+  Boolean $enable   = true,
+  String $ensure    = 'present',
 ) {
 
   include ddclient
@@ -35,9 +36,6 @@ define ddclient::host (
     ''      => '50',
     default => $order,
   }
-
-  $ensure = bool2ensure($enable)
-
 
   if ! defined(Concat[$ddclient::config_file]) {
 

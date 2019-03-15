@@ -15,37 +15,26 @@
 class ddclient::params {
 
   ### Application related parameters
-
-  $package = $::operatingsystem ? {
-    default => 'ddclient',
-  }
-
-  $service = $::operatingsystem ? {
-    default => 'ddclient',
-  }
-
-  $service_status = $::operatingsystem ? {
-    default => true,
-  }
-
-  $process = $::operatingsystem ? {
-    default => 'ddclient',
-  }
-
-  $process_args = $::operatingsystem ? {
-    default => '',
-  }
-
-  $process_user = $::operatingsystem ? {
-    default => 'ddclient',
-  }
-
-  $config_dir = $::operatingsystem ? {
-    default => '/etc',
-  }
-
-  $config_file = $::operatingsystem ? {
-    default => "${config_dir}/ddclient.conf",
+  case $::operatingsystem {
+    'Ubuntu': {
+      $package = 'ddclient'
+      $service = 'ddclient'
+      $service_status = true
+      $process = 'ddclient'
+      $process_args = ''
+      $process_user = 'ddclient'
+      $config_dir = '/etc'
+      $config_file = "${config_dir}/ddclient.conf"
+      $config_file_mode = '0644'
+      $config_file_owner = 'root'
+      $config_file_group = 'root'
+      $config_file_init = '/etc/default/ddclient'
+      $pid_file = '/var/run/ddclient.pid'
+      $data_dir = '/etc/ddclient'
+      $log_dir = '/var/log/ddclient'
+      $log_file = '/var/log/ddclient/ddclient.log'
+    }
+    default: { fail("Class['ddclient::params']: Unsupported operatingsystem: ${::operatingsystem}") }
   }
 
   # Define how you want to manage ddclient configuration:
@@ -67,39 +56,6 @@ class ddclient::params {
   $password = ''
   $protocol = ''
   $hostname = ''
-
-  $config_file_mode = $::operatingsystem ? {
-    default => '0600',
-  }
-
-  $config_file_owner = $::operatingsystem ? {
-    default => 'root',
-  }
-
-  $config_file_group = $::operatingsystem ? {
-    default => 'root',
-  }
-
-  $config_file_init = $::operatingsystem ? {
-    /(?i:Debian|Ubuntu|Mint)/ => '/etc/default/ddclient',
-    default                   => '/etc/sysconfig/ddclient',
-  }
-
-  $pid_file = $::operatingsystem ? {
-    default => '/var/run/ddclient.pid',
-  }
-
-  $data_dir = $::operatingsystem ? {
-    default => '/etc/ddclient',
-  }
-
-  $log_dir = $::operatingsystem ? {
-    default => '/var/log/ddclient',
-  }
-
-  $log_file = $::operatingsystem ? {
-    default => '/var/log/ddclient/ddclient.log',
-  }
 
   $daemon_interval = '3600'
   $enable_syslog = true
@@ -126,4 +82,6 @@ class ddclient::params {
   $debug = false
   $audit_only = false
   $noops = undef
+  $port = ''
+
 }

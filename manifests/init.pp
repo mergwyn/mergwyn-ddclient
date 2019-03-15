@@ -250,6 +250,8 @@ class ddclient (
   $getip_from          = $ddclient::params::getip_from,
   $getip_options       = $ddclient::params::getip_options,
   $port                = $ddclient::params::port,
+  $puppi               = $ddclient::params::puppi,
+  $puppi_helper        = $ddclient::params::puppi_helper,
   ) inherits ddclient::params {
 
   # This used to use the any2bool function from puppi, and I don't feel like
@@ -272,6 +274,7 @@ class ddclient (
   $bool_debug=$debug
   $bool_audit_only=$audit_only
   $bool_enable_syslog=$enable_syslog
+  $bool_enable_ssl=$enable_ssl
 
   ### Definition of some variables used in the module
   $manage_package = $ddclient::bool_absent ? {
@@ -387,18 +390,18 @@ class ddclient (
 
   ### Managed resources
   package { $ddclient::package:
-    ensure  => $ddclient::manage_package,
-    noop    => $ddclient::noops,
+    ensure => $ddclient::manage_package,
+    noop   => $ddclient::noops,
   }
 
   service { 'ddclient':
-    ensure     => $ddclient::manage_service_ensure,
-    name       => $ddclient::service,
-    enable     => $ddclient::manage_service_enable,
-    hasstatus  => $ddclient::service_status,
-    pattern    => $ddclient::process,
-    require    => Package[$ddclient::package],
-    noop       => $ddclient::noops,
+    ensure    => $ddclient::manage_service_ensure,
+    name      => $ddclient::service,
+    enable    => $ddclient::manage_service_enable,
+    hasstatus => $ddclient::service_status,
+    pattern   => $ddclient::process,
+    require   => Package[$ddclient::package],
+    noop      => $ddclient::noops,
   }
 
   ### Include custom class if $my_class is set

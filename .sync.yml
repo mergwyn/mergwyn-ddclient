@@ -1,0 +1,18 @@
+---
+appveyor.yml:
+  delete: true
+.gitlab-ci.yml:
+  delete: true
+.travis.yml:
+  notifications:
+    email:
+      recipients:
+      - gary@theclarkhome.com
+      on_success: never # default: change
+      on_failure: always # default: always
+spec/default_facts.yml:
+  ipaddress: "10.42.42.42"
+spec/spec_helper.rb:
+  coverage_report: true
+  minimum_code_coverage_percentage: 0
+  strict_level: ":warning"

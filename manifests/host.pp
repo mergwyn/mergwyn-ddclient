@@ -42,11 +42,11 @@ define ddclient::host (
   if ! defined(Concat[$ddclient::config_file]) {
 
     concat { $ddclient::config_file:
-      mode    => $ddclient::config_file_mode,
-      warn    => true,
-      owner   => $ddclient::config_file_owner,
-      group   => $ddclient::config_file_group,
-      notify  => Service['ddclient'],
+      mode   => $ddclient::config_file_mode,
+      warn   => true,
+      owner  => $ddclient::config_file_owner,
+      group  => $ddclient::config_file_group,
+      notify => Service['ddclient'],
     }
 
     # The File Header. With Puppet comment

@@ -23,7 +23,7 @@ class ddclient::params {
       $process = 'ddclient'
       $config_dir = '/etc'
       $config_file = "${config_dir}/ddclient.conf"
-      $config_file_mode = '0644'
+      $config_file_mode = '0600'
       $config_file_owner = 'root'
       $config_file_group = 'root'
       $config_file_init = '/etc/default/ddclient'
